@@ -87,7 +87,7 @@ func EndSession() {
 
 func GetSessionID() string {
 	if cookie := GetCookie(cookieName); cookie != nil { // means cookie is already present int he system
-		Log("Cookie Value", cookie.Value)
+		// Log("Cookie Value", cookie.Value)
 		return cookie.Value
 	} else {
 		return ""

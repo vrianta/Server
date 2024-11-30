@@ -32,7 +32,7 @@ func RemoveCookie(cookie_name string) {
 
 func GetCookie(cookie_name string) *http.Cookie {
 	if cookie, err := R.Cookie(cookie_name); err == nil {
-		Log("Cookie: ", cookie)
+		// Log("Cookie: ", cookie)
 		return cookie
 	}
 
