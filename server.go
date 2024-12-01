@@ -16,11 +16,12 @@ var (
 	R            *http.Request
 	POST         = make(map[string]string)
 	GET          = make(map[string]string)
+	storeMutex   sync.Mutex
 	sessionStore = make(map[string]map[string]interface{})
 	SESSION      = make(map[string]interface{})
-	storeMutex   sync.Mutex
-	view         []string
-	viewCount    int
+
+	view      []string
+	viewCount int
 )
 
 func StartServer() error {
@@ -51,8 +52,10 @@ func routungHandler(w http.ResponseWriter, r *http.Request) {
 	GetHandler()
 	CreateHeaders()
 
-	if sessionID := GetSessionID(); sessionID == "" {
-		SESSION = sessionStore[sessionID]
+	if sessionId := GetSessionID(); sessionId != "" {
+		storeMutex.Lock()
+		SESSION = sessionStore[sessionId]
+		storeMutex.Unlock()
 	}
 
 	if value, ok := Routes[r.URL.Path]; ok {
@@ -62,10 +65,12 @@ func routungHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	startRender()
-	if sessionID := GetSessionID(); sessionID != "" {
-		sessionStore[sessionID] = SESSION
-	}
 
+	if sessionId := GetSessionID(); sessionId != "" {
+		storeMutex.Lock()
+		sessionStore[sessionId] = SESSION
+		storeMutex.Unlock()
+	}
 }
 
 func CreateHeaders() {

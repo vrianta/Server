@@ -1,138 +1,158 @@
 package Server
 
 import (
+	"crypto/hmac"
 	"crypto/rand"
+	"crypto/sha256"
 	"encoding/hex"
 	"net/http"
-	"time"
 )
 
 var (
 	cookieName = "sessionid"
 )
 
-// return true server created a new session
-func StartSession(userid string) string {
-
-	// Check if the session in their with the user if the session present this will do
+// StartSession attempts to retrieve or create a new session
+func StartSession() string {
+	// Check if a session exists for the user
 	if sessionID := GetSessionID(); sessionID != "" {
-		Log("Session Already present in the user lavel")
-		if session, ok := sessionStore[sessionID]; !ok {
-			Log("Session present in the user section but not in server hence removing the session and going to ask user to re-login")
-			EndSession()
-			http.Redirect(W, R, "/", http.StatusFound)
-			return sessionID
-		} else if uid, uid_ok := session["userID"]; uid_ok && uid != userid && userid != "Guest" {
-			EndSession()
-			if newSessionID, err := GenerateSessionID(); err == nil {
-				sessionStore[newSessionID] = map[string]interface{}{
-					"userID":    userid,
-					"sessionID": newSessionID,
-				}
-				SESSION = sessionStore[newSessionID]
-				return sessionID
-				// Storing in the Session
-			}
-			return sessionID
-		} else {
-			Log("Session is perfectly fine returning false")
+		Log("Session already present at the user level")
+
+		// Validate the session exists in the store
+		if session, ok := sessionStore[sessionID]; ok && len(session) != 0 {
+			SESSION = sessionStore[sessionID]
+			Log("Session is valid, returning sessionID")
 			return sessionID
 		}
 	}
 
-	if sessionID, err := GenerateSessionID(); err == nil {
-		// storeMutex.Lock()
-		sessionStore[sessionID] = map[string]interface{}{
-			"userID":    userid,
-			"sessionID": sessionID,
-		}
-		SESSION = sessionStore[sessionID]
-		// storeMutex.Unlock()
-		Log(SESSION)
+	// No session exists, create a new one
+	return createNewSession()
+}
 
-		if userid == "Guest" {
-			AddCookie(&http.Cookie{
-				Name:    cookieName,
-				Value:   sessionID,
-				Expires: time.Now().Add(5 * time.Minute).UTC(),
-			})
-		} else {
-			Log("Creating Cookie for sessionID")
-			AddCookie(&http.Cookie{
-				Name:  cookieName,
-				Value: sessionID,
-				// Expires: time.Now().Add(5 * time.Minute).UTC(),
-			})
-		}
-		return sessionID
+// Creates a new session and sets cookies
+func createNewSession() string {
+	// Generate a session ID
+	sessionID, err := GenerateSessionID()
+	if err != nil {
+		Log("Error generating session ID:", err)
+		return ""
 	}
 
+	// Lock the store and add the new session
+	storeMutex.Lock()
+	sessionStore[sessionID] = make(map[string]interface{})
+	SESSION = sessionStore[sessionID]
+	storeMutex.Unlock()
+
+	Log("New session created:", sessionID)
+	setSessionCookie(sessionID)
+	return sessionID
+}
+
+// Sets the session cookie in the client's browser
+func setSessionCookie(sessionID string) {
+	// Set cookie with expiration time for 30 minutes
+	cookie := &http.Cookie{
+		Name:     cookieName,
+		Value:    sessionID,
+		HttpOnly: true,
+		// Expiry time can be set here if necessary
+		// Expires: time.Now().Add(30 * time.Minute).UTC(),
+	}
+
+	AddCookie(cookie)
+	Log("Session cookie set with session ID:", sessionID)
+}
+
+// EndSession ends the current user session
+func EndSession() {
+	sessionID := GetSessionID()
+	if sessionID == "" {
+		Log("No active session found, cannot end session.")
+		return
+	}
+
+	// Remove session data from the store
+	Log("Ending session for session ID:", sessionID)
+	storeMutex.Lock()
+	delete(sessionStore, sessionID)
+	storeMutex.Unlock()
+
+	RemoveCookie(cookieName)
+	Log("Session ended and cookie removed:", sessionID)
+}
+
+// GetSessionID retrieves the session ID from the client's cookie
+func GetSessionID() string {
+	cookie := GetCookie(cookieName)
+	if cookie != nil {
+		Log("Session cookie found with value:", cookie.Value)
+		return cookie.Value
+	}
+	Log("No session cookie found.")
 	return ""
 }
 
-func EndSession() {
-
-	if sessionID := GetSessionID(); sessionID == "" {
-		println("No Session to be END... Hense Creating new session")
-		return
-	} else {
-		// Remove session data from the store
-		// storeMutex.Lock()
-		delete(sessionStore, sessionID)
-		// storeMutex.Unlock()
-
-		RemoveCookie(cookieName)
-	}
-}
-
-func GetSessionID() string {
-	if cookie := GetCookie(cookieName); cookie != nil { // means cookie is already present int he system
-		// Log("Cookie Value", cookie.Value)
-		return cookie.Value
-	} else {
-		return ""
-	}
-}
-
+// IsLoggedIn checks if the user is logged in by verifying the session
 func IsLoggedIn() bool {
-
-	if sessionID := GetSessionID(); sessionID == "" {
-		Log("No User Session is available to look for")
-		return false
-	} else if value, ok := SESSION["isLoggedIn"]; ok {
-		Log("User is Logged in")
-		return value.(bool)
-	} else {
-		Log("No User Logged in")
+	sessionID := GetSessionID()
+	if sessionID == "" {
+		Log("No session found, user is not logged in.")
 		return false
 	}
+
+	if value, ok := SESSION["isLoggedIn"]; ok && value.(bool) {
+		Log("User is logged in with session ID:", sessionID)
+		return true
+	}
+
+	Log("User is not logged in, session ID:", sessionID)
+	return false
 }
 
-// GenerateRandomToken generates a random token of specified length
-func GenerateRandomToken(length int) (string, error) {
-	// Create a byte slice with the desired length
-	bytes := make([]byte, length)
-	// Fill the slice with random bytes
-	_, err := rand.Read(bytes)
+// GenerateRandomToken generates a random token for the user
+func GenerateRandomToken(userID string) (string, error) {
+	// It's better to load the secret key from a secure place rather than hardcoding it
+	secretKey := "yuhjlthushxsiookj98sans"
+	length := 64
+
+	// Generate random bytes
+	randomBytes := make([]byte, length)
+	_, err := rand.Read(randomBytes)
 	if err != nil {
+		Log("Error generating random bytes:", err)
 		return "", err
 	}
-	// Convert the random bytes to a hex string
-	return hex.EncodeToString(bytes), nil
+
+	// Create an HMAC using the secret key and random bytes
+	h := hmac.New(sha256.New, []byte(secretKey))
+	h.Write(randomBytes)
+	h.Write([]byte(userID))
+
+	// Compute the final HMAC value
+	finalHash := h.Sum(nil)
+
+	// Return the hex-encoded hash as the token
+	token := hex.EncodeToString(finalHash)
+	Log("Generated token for user ID:", userID)
+	return token, nil
 }
 
+// GenerateSessionID generates a random session ID
 func GenerateSessionID() (string, error) {
 	// Create a byte slice to hold the random data
-	bytes := make([]byte, 16) // 16 bytes = 128 bits, which is a reasonable length for a session ID
+	bytes := make([]byte, 16) // 16 bytes = 128 bits, reasonable for session ID
 
 	// Generate random bytes using crypto/rand
 	_, err := rand.Read(bytes)
 	if err != nil {
-		return "", err // Return an error if random generation fails
+		Log("Error generating random session ID:", err)
+		return "", err
 	}
 
 	// Convert the byte slice to a hexadecimal string
 	sessionID := hex.EncodeToString(bytes)
-
+	Log("Generated session ID:", sessionID)
 	return sessionID, nil
 }

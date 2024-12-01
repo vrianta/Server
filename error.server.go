@@ -18,6 +18,11 @@ func GetError(_ErrorCode string, _Message string, _Success bool) string {
 	return string(result)
 }
 
+// Helper function to return a pointer to a string
+func PtrToString(s string) *string {
+	return &s
+}
+
 func WriteError(massage string, code int) {
 	http.Error(W, massage, code)
 }
