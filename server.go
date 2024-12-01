@@ -33,7 +33,7 @@ func StartServer() error {
 		Addr: Host + ":" + Port, // Host and port
 	}
 
-	fmt.Println("Server is running on http://" + Host + ":" + Port)
+	Log("Server is running on http://" + Host + ":" + Port)
 
 	// Start the server
 	if err := server.ListenAndServe(); err != nil {
@@ -104,7 +104,7 @@ func PostHandler() {
 			POST[key] = values[0] // If there's only one value, store it as a string
 		}
 
-		fmt.Println("Setting POST Values - key: ", key, " value: ", POST[key])
+		// fmt.Println("Setting POST Values - key: ", key, " value: ", POST[key])
 	}
 }
 

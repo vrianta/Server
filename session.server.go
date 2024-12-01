@@ -27,6 +27,7 @@ func StartSession() string {
 	}
 
 	// No session exists, create a new one
+	Log("Started Creating new Session")
 	return createNewSession()
 }
 
@@ -77,6 +78,7 @@ func EndSession() {
 	Log("Ending session for session ID:", sessionID)
 	storeMutex.Lock()
 	delete(sessionStore, sessionID)
+	SESSION = make(map[string]interface{})
 	storeMutex.Unlock()
 
 	RemoveCookie(cookieName)
