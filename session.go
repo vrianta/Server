@@ -67,7 +67,9 @@ func (sh *SessionHandler) StartSession() *string {
 	// Try to get an existing session ID from the request
 	if sessionID := GetSessionID(sh.R); sessionID != nil {
 		WriteConsole("Session ID found in request: ", *sessionID)
-
+		if *sessionID == "expire" {
+			return sh.CreateNewSession()
+		}
 		// If the session ID doesn't match the current handler's ID, create a new session
 		if (*sessionID) != sh.ID {
 			WriteConsole("Session ID from request does not match handler's session ID. Creating a new session.", *sessionID, " : ", sh.ID)
@@ -107,6 +109,7 @@ func (sh *SessionHandler) CreateNewSession() *string {
 
 // Sets the session cookie in the client's browser
 func (sh *SessionHandler) SetSessionCookie(sessionID *string) {
+
 	if sh.VAR["uid"] == "Guest" {
 		c := &http.Cookie{
 			Name:     "sessionid",
@@ -146,13 +149,16 @@ func (sh *SessionHandler) RequestHandler() {
 	// Initialize queryParams once for later use
 	queryParams := sh.R.URL.Query()
 
+	sh.POST = make(POSTTYPE)
+	sh.GET = make(GETTYPE)
+
 	// Check if the request method is POST
 	if sh.R.Method == http.MethodPost {
 		// Parse multipart form data with a 10 MB limit for file uploads
 		err := sh.R.ParseMultipartForm(10 << 20) // 10 MB
 		if err != nil {
 			WriteConsole("Error parsing multipart form data: ", err)
-			http.Error(sh.W, "Error parsing multipart form data", http.StatusBadRequest)
+			// http.Error(sh.W, "Error parsing multipart form data", http.StatusBadRequest)
 
 		}
 		// Log that it's a POST request

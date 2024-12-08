@@ -6,6 +6,8 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
+
+	"golang.org/x/crypto/bcrypt"
 )
 
 // GenerateRandomToken generates a random token for the user
@@ -60,4 +62,19 @@ func StringArrayToJson(data []string) (string, error) {
 
 	// Return the JSON string (as a string)
 	return string(jsonData), nil
+}
+
+// HashPassword hashes a password using bcrypt
+func HashPassword(password *string) (string, error) {
+	hash, err := bcrypt.GenerateFromPassword([]byte(*password), bcrypt.DefaultCost)
+	if err != nil {
+		return "", err
+	}
+	return string(hash), nil
+}
+
+// CheckPassword compares a hashed password with a plain password
+func CheckPassword(hashedPassword, plainPassword string) bool {
+	err := bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(plainPassword))
+	return err == nil // Returns true if passwords match
 }

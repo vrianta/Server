@@ -7,7 +7,7 @@ import (
 // var storeMutex
 
 func (sh *ServerHandlerType) routingHandler(w http.ResponseWriter, r *http.Request) {
-
+	// WriteConsole(r.Header)
 	// Log the incoming request URL
 	WriteConsole("Received request for URL: ", r.URL.Path)
 
@@ -32,6 +32,9 @@ func (sh *ServerHandlerType) routingHandler(w http.ResponseWriter, r *http.Reque
 			}
 		} else {
 			WriteConsole("Failed to start session")
+			renderhandeler := NewRenderHandlerObj(w)
+			renderhandeler.Render(GetResponse("RELOGIN", "Server is not have the session anymore need to relogin the session", false))
+			renderhandeler.StartRender()
 			return
 		}
 	} else {
@@ -71,6 +74,9 @@ func (sh *ServerHandlerType) routingHandler(w http.ResponseWriter, r *http.Reque
 				}
 			} else {
 				WriteConsole("Failed to start session")
+				renderhandeler := NewRenderHandlerObj(w)
+				renderhandeler.Render(GetResponse("RELOGIN", "Server is not have the session anymore need to relogin the session", false))
+				renderhandeler.StartRender()
 				return
 			}
 		}
