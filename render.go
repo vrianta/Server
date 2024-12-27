@@ -26,7 +26,7 @@ func (rh *RenderHandeler) Render(massages string) {
 
 func (rh *RenderHandeler) StartRender() {
 	for i := 0; i < rh.viewCount; i++ {
-		fmt.Println("Rendering :", rh.view[i])
+		// fmt.Println("Rendering :", rh.view[i])
 		fmt.Fprint(rh.W, rh.view[i])
 	}
 	// fmt.Fprint(W, view)
