@@ -159,14 +159,13 @@ func (sh *SessionHandler) RequestHandler() {
 		if err != nil {
 			WriteConsole("Error parsing multipart form data: ", err)
 			// http.Error(sh.W, "Error parsing multipart form data", http.StatusBadRequest)
-
 		}
 		// Log that it's a POST request
 		WriteConsole("Handling POST request")
 		// Handle POST form data
 		for key, values := range sh.R.PostForm {
 			// Log each POST parameter
-			WriteConsolef("Processing POST parameter: %s=%v\n", key, values)
+			// WriteConsolef("Processing POST parameter: %s=%v\n", key, values)
 			sh.HandlePostParams(key, values)
 		}
 	}
@@ -175,8 +174,8 @@ func (sh *SessionHandler) RequestHandler() {
 	WriteConsole("Handling non-POST request, processing query parameters")
 	for key, values := range queryParams {
 		// Log each query parameter
-		WriteConsolef("Processing query parameter: %s=%v\n", key, values)
-		WriteConsolef("Found query parameter: %s=%v\n", key, values)
+		// WriteConsolef("Processing query parameter: %s=%v\n", key, values)
+		// WriteConsolef("Found query parameter: %s=%v\n", key, values)
 		sh.HandleQueryParams(key, values)
 	}
 }
@@ -188,14 +187,14 @@ func (sh *SessionHandler) HandleQueryParams(key string, values []string) {
 
 	if len(values) > 1 {
 		if sh.GET[key], err = StringArrayToJson(values); err != nil {
-			WriteConsole("Failed to convert multiple values of key '", key, "' to JSON: ", key, err)
+			// WriteConsole("Failed to convert multiple values of key '", key, "' to JSON: ", key, err)
 			http.Error(sh.W, "Failed to convert data to JSON", http.StatusMethodNotAllowed)
 
 		}
 	} else {
 		sh.GET[key] = values[0] // Store single value as a string
 	}
-	WriteConsole("Handled query parameter - key: ", key, ", value: ", sh.GET[key])
+	// WriteConsole("Handled query parameter - key: ", key, ", value: ", sh.GET[key])
 }
 
 // handlePostParams processes parameters found in the POST data
@@ -204,11 +203,11 @@ func (sh *SessionHandler) HandlePostParams(key string, values []string) {
 	// Check for multiple values
 	if len(values) > 1 {
 		if sh.POST[key], err = StringArrayToJson(values); err != nil {
-			WriteConsole("Failed to convert multiple values of key '", key, "' to JSON: ", err)
+			// WriteConsole("Failed to convert multiple values of key '", key, "' to JSON: ", err)
 			http.Error(sh.W, "Failed to convert data to JSON", http.StatusMethodNotAllowed)
 		}
 	} else {
 		sh.POST[key] = values[0] // Store single value as a string
 	}
-	WriteConsole("Handled POST parameter - key: ", key, ", value: ", sh.POST[key])
+	// WriteConsole("Handled POST parameter - key: ", key, ", value: ", sh.POST[key])
 }
