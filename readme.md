@@ -122,3 +122,15 @@ func main() {
     }
 }
 ```
+
+## Demo: Get Function
+
+You can define functions to interact with the session handler. Here is a demo of a `Get` function that takes a `SessionHandler` as an argument.
+
+```go
+func Get(sessionHandler *server.SessionHandler) {
+    // Example of accessing session data
+    fmt.Println("Session Handler:", sessionHandler)
+    // You can add logic to handle session data here
+}
+```
