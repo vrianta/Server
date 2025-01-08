@@ -134,3 +134,115 @@ func Get(sessionHandler *server.SessionHandler) {
     // You can add logic to handle session data here
 }
 ```
+
+## Handling Sessions
+
+Sessions are handled through the `SessionHandler` object, which stores session data (such as `uid` and `token`). To access and manipulate session data, use the `VAR` field of `SessionHandler`.
+
+### Example:
+
+```go
+
+if uid != sessionHandler.VAR["uid"].(string) {
+    sessionHandler.Renderhandler.Render(server.GetResponse("WORNGUID", "Wrong User Id passed", false))
+    return
+}
+
+if token != sessionHandler.VAR["token"].(string) {
+    sessionHandler.Renderhandler.Render(server.GetResponse("WRONGTOKEN", "Wrong token passed", false))
+    return
+}
+
+```
+
+## Rendering Responses
+
+To render responses to the user, the `Renderhandler` object is used. It holds the response content and sends it back to the client using the `StartRender()` function.
+
+### Example:
+
+```go
+
+sessionHandler.Renderhandler.Render("Hello World")
+
+```
+
+This will send a response with the message "Did not receive the request on POST method" if a non-POST request is made.
+
+## Using POST and GET Data
+
+To handle POST and GET data, use the `sessionHandler.POST` for POST data and `sessionHandler.GET` for GET data. You can also access session data through the `sessionHandler.VAR` field.
+
+### Example:
+
+```go
+
+uid, uidExists := sessionHandler.POST["uid"]
+token, tokenExists := sessionHandler.POST["token"]
+
+if !uidExists || !tokenExists {
+    missing := []string{}
+    if !uidExists {
+        missing = append(missing, "UID")
+    }
+    if !tokenExists {
+        missing = append(missing, "token")
+    }
+    server.WriteConsole(fmt.Sprintf("Missing required fields: %v", missing))
+    sessionHandler.Renderhandler.Render(server.GetResponse("MissingCredentials", strings.Join(missing, ", "), false))
+    return
+}
+
+```
+
+## Demo Example
+
+Here’s a simple demonstration of using the server package to handle routing, sessions, and rendering:
+
+### Example:
+
+```go
+
+func Home(sessionHandler *server.SessionHandler) {
+    sessionHandler.Renderhandler.Render(server.GetResponse("CONNECTION", "Connection succeeded successfully", true))
+}
+
+func Get(sessionHandler *server.SessionHandler) {
+    if !sessionHandler.IsLoggedIn() {
+        sessionHandler.Renderhandler.Render(server.GetResponse("NOPOSTMETHOD", "Did not receive the request on POST method", false))
+        return
+    }
+
+    uid, uidExists := sessionHandler.POST["uid"]
+    token, tokenExists := sessionHandler.POST["token"]
+
+    if !uidExists || !tokenExists {
+        missing := []string{}
+        if !uidExists {
+            missing = append(missing, "UID")
+        }
+        if !tokenExists {
+            missing = append(missing, "token")
+        }
+        server.WriteConsole(fmt.Sprintf("Missing required fields: %v", missing))
+        sessionHandler.Renderhandler.Render(server.GetResponse("MissingCredentials", strings.Join(missing, ", "), false))
+        return
+    }
+
+    if uid != sessionHandler.VAR["uid"].(string) {
+        server.WriteConsole("User ID is not matching")
+        sessionHandler.Renderhandler.Render(server.GetResponse("WORNGUID", "Wrong User ID passed", false))
+        return
+    }
+
+    if token != sessionHandler.VAR["token"].(string) {
+        server.WriteConsole("Token is not matching")
+        sessionHandler.Renderhandler.Render(server.GetResponse("WRONGTOKEN", "Wrong token passed", false))
+        return
+    }
+
+    // Handle further logic...
+}
+
+```
+
