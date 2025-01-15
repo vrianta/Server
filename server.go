@@ -6,7 +6,7 @@ import (
 )
 
 type ROUTETYPE map[string]func(*SessionHandler)
-type ServerHandlerType struct {
+type ServerHandler struct {
 	Host string
 	Port string
 
@@ -16,21 +16,21 @@ type ServerHandlerType struct {
 }
 
 var (
-	ServerHandler *ServerHandlerType
+	serverHandler *ServerHandler
 )
 
-func New(host, port string, routes ROUTETYPE) *ServerHandlerType {
-	ServerHandler = &ServerHandlerType{
+func New(host, port string, routes ROUTETYPE) *ServerHandler {
+	serverHandler = &ServerHandler{
 		Host:   host,
 		Port:   port,
 		Routes: routes,
 
 		SessionHandler: make(map[string]SessionHandler),
 	}
-	return ServerHandler
+	return serverHandler
 }
 
-func (sh *ServerHandlerType) StartServer() error {
+func (sh *ServerHandler) StartServer() error {
 
 	http.HandleFunc("/", sh.routingHandler)
 
@@ -51,5 +51,5 @@ func (sh *ServerHandlerType) StartServer() error {
 }
 
 func RemoveSessionHandler(sessionID *string) {
-	delete(ServerHandler.SessionHandler, *sessionID)
+	delete(serverHandler.SessionHandler, *sessionID)
 }

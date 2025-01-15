@@ -6,7 +6,7 @@ import (
 
 // var storeMutex
 
-func (sh *ServerHandlerType) routingHandler(w http.ResponseWriter, r *http.Request) {
+func (sh *ServerHandler) routingHandler(w http.ResponseWriter, r *http.Request) {
 	// WriteConsole(r.Header)
 	// Log the incoming request URL
 	WriteConsole("Received request for URL: ", r.URL.Path)
