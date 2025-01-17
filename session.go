@@ -136,16 +136,9 @@ func (sh *SessionHandler) RequestHandler() {
 	// Initialize queryParams once for later use
 	queryParams := sh.R.URL.Query()
 
-	// Reuse existing maps instead of creating new ones
-	for k := range sh.POST {
-		delete(sh.POST, k)
-	}
-	for k := range sh.GET {
-		delete(sh.GET, k)
-	}
-	for k := range sh.VAR {
-		delete(sh.VAR, k)
-	}
+	sh.POST = make(POSTTYPE)
+	sh.GET = make(GETTYPE)
+	sh.VAR = make(SESSIONTYPE)
 
 	// Check if the request method is POST
 	if sh.R.Method == http.MethodPost {
