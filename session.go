@@ -109,28 +109,16 @@ func (sh *SessionHandler) CreateNewSession() *string {
 
 // Sets the session cookie in the client's browser
 func (sh *SessionHandler) SetSessionCookie(sessionID *string) {
-
-	if sh.VAR["uid"] == "Guest" {
-		c := &http.Cookie{
-			Name:     "sessionid",
-			Value:    *sessionID,
-			HttpOnly: true,
-			// Expiry time can be set here if necessary
-			Expires: time.Now().Add(30 * time.Minute).UTC(),
-		}
-		AddCookie(c, sh.W, sh.R)
-		return
-	}
 	c := &http.Cookie{
 		Name:     "sessionid",
 		Value:    *sessionID,
 		HttpOnly: true,
+		Expires:  time.Now().Add(30 * time.Minute).UTC(),
 	}
 	AddCookie(c, sh.W, sh.R)
 }
 
 func EndSession(w http.ResponseWriter, r http.Request, sessionhandler *SessionHandler) {
-
 	sessionID := GetSessionID(&r)
 	if sessionID == nil {
 		WriteConsole("No active session found, cannot end session.")
@@ -141,7 +129,6 @@ func EndSession(w http.ResponseWriter, r http.Request, sessionhandler *SessionHa
 	WriteConsole("Ending session for session ID:", *sessionID)
 
 	RemoveCookie("sessionid", w, &r)
-	sessionhandler = nil
 	RemoveSessionHandler(sessionID)
 }
 
@@ -149,8 +136,16 @@ func (sh *SessionHandler) RequestHandler() {
 	// Initialize queryParams once for later use
 	queryParams := sh.R.URL.Query()
 
-	sh.POST = make(POSTTYPE)
-	sh.GET = make(GETTYPE)
+	// Reuse existing maps instead of creating new ones
+	for k := range sh.POST {
+		delete(sh.POST, k)
+	}
+	for k := range sh.GET {
+		delete(sh.GET, k)
+	}
+	for k := range sh.VAR {
+		delete(sh.VAR, k)
+	}
 
 	// Check if the request method is POST
 	if sh.R.Method == http.MethodPost {
@@ -160,12 +155,9 @@ func (sh *SessionHandler) RequestHandler() {
 			WriteConsole("Error parsing multipart form data: ", err)
 			// http.Error(sh.W, "Error parsing multipart form data", http.StatusBadRequest)
 		}
-		// Log that it's a POST request
 		WriteConsole("Handling POST request")
 		// Handle POST form data
 		for key, values := range sh.R.PostForm {
-			// Log each POST parameter
-			// WriteConsolef("Processing POST parameter: %s=%v\n", key, values)
 			sh.HandlePostParams(key, values)
 		}
 	}
@@ -173,9 +165,6 @@ func (sh *SessionHandler) RequestHandler() {
 	// Log handling of query parameters for non-POST methods
 	WriteConsole("Handling non-POST request, processing query parameters")
 	for key, values := range queryParams {
-		// Log each query parameter
-		// WriteConsolef("Processing query parameter: %s=%v\n", key, values)
-		// WriteConsolef("Found query parameter: %s=%v\n", key, values)
 		sh.HandleQueryParams(key, values)
 	}
 }
