@@ -120,6 +120,7 @@ func (sh *SessionHandler) SetSessionCookie(sessionID *string) {
 
 func EndSession(w http.ResponseWriter, r http.Request, sessionhandler *SessionHandler) {
 	sessionID := GetSessionID(&r)
+
 	if sessionID == nil {
 		WriteConsole("No active session found, cannot end session.")
 		return
@@ -138,7 +139,6 @@ func (sh *SessionHandler) RequestHandler() {
 
 	sh.POST = make(POSTTYPE)
 	sh.GET = make(GETTYPE)
-	sh.VAR = make(SESSIONTYPE)
 
 	// Check if the request method is POST
 	if sh.R.Method == http.MethodPost {
