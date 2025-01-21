@@ -43,10 +43,6 @@ func (s *sMTPClient) InitSMTPClient(host string, port int, username, password st
 		return err
 	}
 
-	if err := client.Mail(username); err != nil {
-		return err
-	}
-
 	s.sMTPConfig = &sMTPConfig{client: client}
 	s.sender_mail = username
 
@@ -54,6 +50,10 @@ func (s *sMTPClient) InitSMTPClient(host string, port int, username, password st
 }
 
 func (s *sMTPClient) SendMail(to []string, subject, body string) error {
+
+	if err := s.sMTPConfig.client.Mail(s.sender_mail); err != nil {
+		return err
+	}
 
 	for _, recipient := range to {
 		if err := s.sMTPConfig.client.Rcpt(recipient); err != nil {
