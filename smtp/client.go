@@ -73,7 +73,11 @@ func (s *sMTPClient) SendMail(to []string, subject, body string) error {
 	}
 	defer writer.Close()
 
-	message := fmt.Sprintf("From: %s\r\nSubject: %s\r\n\r\n%s", s.username, subject, body)
+	// Correctly format the email message
+	message := fmt.Sprintf(
+		"From: %s\r\nTo: %s\r\nSubject: %s\r\n\r\n%s",
+		s.username, to[0], subject, body,
+	)
 	_, err = writer.Write([]byte(message))
 
 	client.Close()
