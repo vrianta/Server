@@ -14,11 +14,13 @@ type sMTPConfig struct {
 type sMTPClient struct {
 	sMTPConfig  *sMTPConfig
 	sender_mail string
+	auth        smtp.Auth
 }
 
 var Client = &sMTPClient{}
 
 func (s *sMTPClient) InitSMTPClient(host string, port int, username, password string) error {
+
 	address := fmt.Sprintf("%s:%d", host, port)
 	conn, err := net.Dial("tcp", address)
 	if err != nil {
@@ -37,8 +39,8 @@ func (s *sMTPClient) InitSMTPClient(host string, port int, username, password st
 		return err
 	}
 
-	auth := smtp.PlainAuth("", username, password, host)
-	if err := client.Auth(auth); err != nil {
+	s.auth = smtp.PlainAuth("", username, password, host)
+	if err := client.Auth(s.auth); err != nil {
 		fmt.Printf("failed to Authenticate client : %s", err.Error())
 		return err
 	}
@@ -50,6 +52,17 @@ func (s *sMTPClient) InitSMTPClient(host string, port int, username, password st
 }
 
 func (s *sMTPClient) SendMail(to []string, subject, body string) error {
+	// Verify if the connection is still available
+	if err := s.sMTPConfig.client.Noop(); err != nil {
+		// Re-establish the connection if not available
+		if err_tls := s.sMTPConfig.client.StartTLS(&tls.Config{InsecureSkipVerify: true}); err_tls != nil {
+			return err_tls
+		}
+
+		if err := s.sMTPConfig.client.Auth(s.auth); err != nil {
+			return err
+		}
+	}
 
 	if err := s.sMTPConfig.client.Mail(s.sender_mail); err != nil {
 		return err
