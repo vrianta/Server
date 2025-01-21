@@ -12,8 +12,9 @@ type sMTPConfig struct {
 }
 
 type sMTPClient struct {
-	auth    smtp.Auth
-	address string
+	sMTPConfig *sMTPConfig
+	auth       smtp.Auth
+	address    string
 
 	host               string
 	port               int
@@ -73,15 +74,13 @@ func (s *sMTPClient) SendMail(to []string, subject, body string) error {
 	}
 	defer writer.Close()
 
-	// Correctly format the email message
-	message := fmt.Sprintf(
-		"From: %s\r\nTo: %s\r\nSubject: %s\r\n\r\n%s",
-		s.username, to[0], subject, body,
-	)
+	message := fmt.Sprintf("From: %s\r\nTo: %s\r\nSubject: %s\r\n\r\n%s", s.username, to[0], subject, body)
 	_, err = writer.Write([]byte(message))
-
-	client.Close()
 
 	return err
 
+}
+
+func (s *sMTPClient) Close() error {
+	return s.sMTPConfig.client.Quit()
 }
