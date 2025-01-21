@@ -47,6 +47,8 @@ func (sh *ServerHandler) StartServer() error {
 	} else {
 		return err
 	}
+
+	WriteConsole("Server started successfully " + sh.Host + ":" + sh.Port)
 	return nil
 }
 
