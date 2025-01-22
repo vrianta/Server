@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net"
 	"net/smtp"
+	"strings"
 )
 
 type sMTPConfig struct {
@@ -74,7 +75,7 @@ func (s *sMTPClient) SendMail(to []string, subject, body string) error {
 	}
 	defer writer.Close()
 
-	message := fmt.Sprintf("From: %s\r\nTo: %s\r\nSubject: %s\r\n\r\n%s", s.username, to[0], subject, body)
+	message := fmt.Sprintf("From: %s\r\nTo: %s\r\nSubject: %s\r\n\r\n%s", s.username, strings.Join(to, ","), subject, body)
 	_, err = writer.Write([]byte(message))
 
 	return err
