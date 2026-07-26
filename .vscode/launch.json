@@ -2,6 +2,16 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "name": "Debug",
+      "type": "go",
+      "mode": "auto",
+      "request": "launch",
+      "program": "${workspaceFolder}",
+      "args": [
+        "-h"
+      ]
+    },
+    {
       "name": "build Mac",
       "type": "bash",
       "request": "launch",

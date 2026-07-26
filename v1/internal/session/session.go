@@ -359,7 +359,7 @@ func StartSessionHandler() {
 			RemoveSession(&next.ID)
 			sessionHeap.Pop()
 			heapAccessMutex.Unlock()
-			log.WriteLog("Session expired: " + next.ID)
+			log.WriteLogf("Session expired: " + next.ID)
 			continue
 		}
 

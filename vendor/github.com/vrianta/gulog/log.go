@@ -21,7 +21,7 @@ const (
 )
 
 var logLevelString = [...]string{
-	Unknown: "Unknown",
+	Unknown: "",
 	DEBUG:   "DEBUG",
 	INFO:    "INFO",
 	WARN:    "WARN",
@@ -61,6 +61,6 @@ func WriteLog(messages ...any) {
 
 // Laggacy Support
 func WriteLogf(msg string, args ...any) {
-
-	fmt.Printf(msg, args...)
+	log(Unknown, &conf, msg, args...)
+	// fmt.Printf(msg, args...)
 }

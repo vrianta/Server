@@ -14,7 +14,7 @@ import (
 func Init() {
 
 	if config.GetDatabaseConfig().Host == "" {
-		log.WriteLog("DataBase Config do not have any host in it so We are skipping all database connections")
+		log.WriteLogf("DataBase Config do not have any host in it so We are skipping all database connections")
 		return
 	}
 	var err error

@@ -7,6 +7,7 @@ import (
 
 	_ "embed"
 
+	"github.com/vrianta/gulog"
 	log "github.com/vrianta/gulog"
 )
 
@@ -199,4 +200,6 @@ func handle_args() {
 			}
 		}
 	}
+
+	gulog.Wait()
 }

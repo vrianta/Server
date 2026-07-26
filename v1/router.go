@@ -153,23 +153,6 @@ func CallMethodByName(obj any, methodName string, args ...interface{}) (func() V
 
 	return method.Interface().(func() View), nil
 }
-func printMethods(obj interface{}) {
-	t := reflect.TypeOf(obj)
-	fmt.Println("Type:", t)
-
-	for i := 0; i < t.NumMethod(); i++ {
-		m := t.Method(i)
-		fmt.Println("Method:", m.Name)
-	}
-
-	if t.Kind() != reflect.Ptr {
-		tp := reflect.PointerTo(t)
-		for i := 0; i < tp.NumMethod(); i++ {
-			m := tp.Method(i)
-			fmt.Println("Ptr method:", m.Name)
-		}
-	}
-}
 
 func getFunctionName(i any) string {
 

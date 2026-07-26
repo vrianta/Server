@@ -57,7 +57,7 @@ func runRequest(w http.ResponseWriter, r *http.Request, c controllerInterface) {
 		}
 
 		if !config.GetWebConfig().Build {
-			// log.WriteLogf("Updating the Template")
+			// log.WriteLogff("Updating the Template")
 			__template.Update()
 		}
 		if err := executeTemplate(w, __template, view.response); err != nil {
@@ -128,7 +128,7 @@ func runRequestForFunction(w http.ResponseWriter, c controllerInterface, defFunc
 		}
 
 		if !config.GetWebConfig().Build {
-			// log.WriteLogf("Updating the Template")
+			// log.WriteLogff("Updating the Template")
 			__template.Update()
 		}
 		if err := executeTemplate(w, __template, view.response); err != nil {

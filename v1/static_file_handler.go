@@ -37,7 +37,7 @@ func staticFileHandler(contentType string) http.HandlerFunc {
 
 		info, err := os.Stat(_filePath)
 		if err != nil {
-			log.WriteLog(err.Error())
+			log.WriteLogf("%s", err.Error())
 			http.Error(w, "File not found", http.StatusNotFound)
 			return
 		}

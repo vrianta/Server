@@ -39,7 +39,7 @@ func init() {
 		output_app_name = "app"
 	}
 
-	run_app = runAppCmd()
+	// run_app = runAppCmd()
 	migrate_models = new_migrate_model_cmd()
 	migrate_components = new_migrate_component_cmd()
 	// config.init()
@@ -115,6 +115,7 @@ func start_app() {
 
 	log.Info("Starting server process...")
 
+	run_app = runAppCmd() //. creating the the vinary and command
 	// NEW: don't Start() first—use startServer which wires pipes then starts
 	if err := startServer(run_app); err != nil {
 		panic("Failed to Start the Server: " + err.Error())
@@ -373,7 +374,7 @@ func app_build() {
 	}
 }
 
-var currentDir, err = os.Getwd()
+var currentDir, _ = os.Getwd()
 var runBName string = filepath.Base(currentDir) + "run_" + "a7Kp9LmX2QzN8rTf"
 
 /*
@@ -382,6 +383,7 @@ var runBName string = filepath.Base(currentDir) + "run_" + "a7Kp9LmX2QzN8rTf"
  * Returns a exec.Cmd which can be used to run the application
  */
 func runAppCmd() *exec.Cmd {
+	buildAgai() // building the application to run
 	r := exec.Command(runBName, "-ss")
 
 	return r
@@ -390,8 +392,7 @@ func runAppCmd() *exec.Cmd {
 // Clean the build bindary
 func buildAgai() {
 	if err := exec.Command("go", "build", ".", "-o", runBName).Run(); err != nil {
-		log.Error("Failed to  Build app %s", err.Error())
-		os.Exit(-1)
+		panic("Failed to  Build app " + err.Error())
 	}
 }
 

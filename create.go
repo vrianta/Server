@@ -21,9 +21,9 @@ import (
 func create_controller() {
 
 	if len(f.controller_names_to_create) > 0 {
-		log.WriteLog("---------------------------------\n")
-		log.WriteLog("Creating Controllers:\n")
-		log.WriteLog("---------------------------------\n")
+		log.WriteLogf("---------------------------------\n")
+		log.WriteLogf("Creating Controllers:\n")
+		log.WriteLogf("---------------------------------\n")
 	} else {
 		return
 	}
@@ -100,7 +100,7 @@ func create_controller() {
 		log.Warn("There are no option to update the routes automatically - please make sure you update the routes in routes.go file int the root directory")
 	}
 
-	log.WriteLog("---------------------------------")
+	log.WriteLogf("---------------------------------")
 }
 
 /*
@@ -113,9 +113,9 @@ func create_view() {
 		return
 	}
 
-	log.WriteLog("---------------------------------")
-	log.WriteLog("Creating Views: ")
-	log.WriteLog("---------------------------------")
+	log.WriteLogf("---------------------------------")
+	log.WriteLogf("Creating Views: ")
+	log.WriteLogf("---------------------------------")
 
 	for _, view_name := range f.view_names_to_create {
 		// Normalize view name and allow nested paths like "admin/dashboard"
@@ -180,89 +180,16 @@ func create_view() {
 
 		log.Info("✅ View '%s' created at %s", view_name, viewFile)
 	}
-	log.WriteLog("---------------------------------")
-}
-
-/*
-- create_theme is same as create_view but it will create the view in the theme folder instead of views folder and it will not log the warning to update the routes because theme views are not directly linked to routes
-- it will creat the folder theme if that does not exists
-- then it will create a subfolder with the view name but if the folder exists int will log.Error that the view is already exists and return the function
-- inside that it will create a file called index.php
-*/
-func create_theme() {
-
-	if len(f.view_names_to_create) > 0 {
-		log.WriteLog("---------------------------------")
-		log.WriteLog("Creating Views: ")
-		log.WriteLog("---------------------------------")
-
-	} else {
-		return
-	}
-
-	for _, view_name := range f.view_names_to_create {
-
-		viewRoot := config.GetWebConfig().ViewFolder
-		viewDir := filepath.Join(viewRoot, view_name)
-		// Check if view already exists
-		if fileInfo, err := os.Stat(viewDir); err == nil && fileInfo.IsDir() {
-			log.Warn("⚠️  Skipped: View '%s' already exists at %s", view_name, viewDir)
-			continue
-		}
-
-		log.Info("🧩 Creating view: %s", view_name)
-
-		viewFile := filepath.Join(viewDir, "index.php")
-
-		// Read the view template from embedded FS
-		viewTemplate, err := templates.ReadFile("templates/index.php.template")
-		if err != nil {
-			log.Error("❌ Error: Failed to read view template: %v", err)
-			return
-		}
-
-		// Create the view directory
-		log.Info("📁 Creating directory: %s", viewDir)
-		if err := os.MkdirAll(viewDir, os.ModePerm); err != nil {
-			log.Error("❌ Error: Could not create view directory %s: %v", viewDir, err)
-			return
-		}
-
-		// Parse and render the template
-		tmpl, err := template.New(view_name).Parse(string(viewTemplate))
-		if err != nil {
-			log.Error("❌ Error: Template parse failed for %s: %v", "index.php.template", err)
-			return
-		}
-
-		var buf bytes.Buffer
-		err = tmpl.Execute(&buf, map[string]string{
-			"view_name": capitalize(view_name),
-		})
-		if err != nil {
-			log.Error("❌ Error: Template execution failed for %s: %v", "index.php.template", err)
-			return
-		}
-
-		// Write index.php to view folder
-		err = os.WriteFile(viewFile, buf.Bytes(), 0644)
-		if err != nil {
-			log.Error("❌ Error: Could not write view file to %s: %v", viewFile, err)
-			return
-		}
-
-		log.Info("✅ View '%s' created at %s", view_name, viewFile)
-	}
-	log.WriteLog("---------------------------------")
+	log.WriteLogf("---------------------------------")
 }
 
 // Creating template Model
 func create_models() {
 
 	if len(f.model_names_to_create) > 0 {
-		log.WriteLog("---------------------------------")
-		log.WriteLog("Creating Models: ")
-		log.WriteLog("---------------------------------")
+		log.WriteLogf("---------------------------------")
+		log.WriteLogf("Creating Models: ")
+		log.WriteLogf("---------------------------------")
 	} else {
 		return
 	}
@@ -322,7 +249,7 @@ func create_models() {
 		log.Info("✅ Model '%s' created at: %s", model_name, model_output_path)
 	}
 
-	log.WriteLog("---------------------------------")
+	log.WriteLogf("---------------------------------")
 
 }
 
@@ -335,8 +262,8 @@ Then eavluate the model in the file and craete component according to that
 func create_components() {
 
 	if len(f.component_names_to_create) > 0 {
-		log.WriteLog("Creating Components: ")
-		log.WriteLog("---------------------------------")
+		log.WriteLogf("Creating Components: ")
+		log.WriteLogf("---------------------------------")
 	} else {
 		return
 	}
@@ -424,7 +351,7 @@ func create_components() {
 		log.Info("✅ Component '%s' created at %s", componentName, componentFile)
 	}
 
-	log.WriteLog("---------------------------------")
+	log.WriteLogf("---------------------------------")
 
 }
 

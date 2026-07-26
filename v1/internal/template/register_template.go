@@ -42,7 +42,7 @@ func init() {
 				http.HandleFunc(fileInfo.Uri, func(w http.ResponseWriter, r *http.Request) {
 					t, _ := templateComponents[key]
 					if !config.GetWebConfig().Build {
-						// log.WriteLogf("Updating the Template")
+						// log.WriteLogff("Updating the Template")
 						t.Update()
 					}
 
