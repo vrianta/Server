@@ -5,8 +5,8 @@ import (
 	"os"
 
 	"github.com/vrianta/agai/v1/config"
-	"github.com/vrianta/agai/v1/log"
 	"github.com/vrianta/agai/v1/utils"
+	log "github.com/vrianta/gulog"
 )
 
 var view_folder = utils.JoinPath(".", config.GetViewFolder())

@@ -20,7 +20,7 @@ import (
 	"time"
 	"unicode"
 
-	"github.com/vrianta/agai/v1/log"
+	log "github.com/vrianta/gulog"
 )
 
 // return the string of the total field expression mostly will be used for table creation

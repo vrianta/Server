@@ -8,7 +8,7 @@ import (
 
 	"github.com/vrianta/agai/v1/config"
 	DatabaseHandler "github.com/vrianta/agai/v1/database"
-	"github.com/vrianta/agai/v1/log"
+	log "github.com/vrianta/gulog"
 )
 
 // Function to get the table topology and compare with the latest FieldTypes and generate a new SQL queryBuilder to alter the table

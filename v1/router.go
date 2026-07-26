@@ -7,7 +7,7 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/vrianta/agai/v1/log"
+	log "github.com/vrianta/gulog"
 )
 
 // it will keep a record if the user has registered / root path or not

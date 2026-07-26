@@ -12,9 +12,9 @@ import (
 	"github.com/vrianta/agai/v1/internal/flags"
 	"github.com/vrianta/agai/v1/internal/session"
 	"github.com/vrianta/agai/v1/internal/template"
-	"github.com/vrianta/agai/v1/log"
 	"github.com/vrianta/agai/v1/model"
 	"github.com/vrianta/agai/v1/utils"
+	log "github.com/vrianta/gulog"
 )
 
 // Global instance of the server

@@ -47,8 +47,8 @@ import (
 	"strings"
 
 	"github.com/vrianta/agai/v1/internal/session"
-	"github.com/vrianta/agai/v1/log"
 	"github.com/vrianta/agai/v1/utils"
+	log "github.com/vrianta/gulog"
 )
 
 // Routes is a map of HTTP methods to their respective controllers

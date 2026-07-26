@@ -5,7 +5,7 @@ import (
 
 	DatabaseHandler "github.com/vrianta/agai/v1/database"
 	"github.com/vrianta/agai/v1/internal/flags"
-	"github.com/vrianta/agai/v1/log"
+	log "github.com/vrianta/gulog"
 )
 
 func (m *meta) addField(field *Field) {

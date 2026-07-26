@@ -8,7 +8,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/vrianta/agai/v1/log"
+	log "github.com/vrianta/gulog"
 )
 
 // Joson pattern will be

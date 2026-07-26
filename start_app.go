@@ -15,7 +15,7 @@ import (
 	"time"
 
 	"github.com/vrianta/agai/v1/config"
-	"github.com/vrianta/agai/v1/log"
+	log "github.com/vrianta/gulog"
 )
 
 // var clientChan chan string = make(chan string)
@@ -90,6 +90,7 @@ func restartApp() error {
 		log.Error("Failed to wait for the all process kill: %s", err.Error())
 	} // reap
 
+	run_app = nil
 	run_app = runAppCmd()
 
 	FLAG_restarted_application_after_component_change = false
@@ -372,15 +373,26 @@ func app_build() {
 	}
 }
 
+var currentDir, err = os.Getwd()
+var runBName string = filepath.Base(currentDir) + "run_" + "a7Kp9LmX2QzN8rTf"
+
 /*
  * Run the solution
  * Command it is running is go run .
  * Returns a exec.Cmd which can be used to run the application
  */
 func runAppCmd() *exec.Cmd {
-	r := exec.Command("go", "run", ".", "-ss")
+	r := exec.Command(runBName, "-ss")
 
 	return r
+}
+
+// Clean the build bindary
+func buildAgai() {
+	if err := exec.Command("go", "build", ".", "-o", runBName).Run(); err != nil {
+		log.Error("Failed to  Build app %s", err.Error())
+		os.Exit(-1)
+	}
 }
 
 func new_app_cmd() *exec.Cmd {

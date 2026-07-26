@@ -6,8 +6,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/vrianta/agai/v1/log"
 	"github.com/vrianta/agai/v1/utils"
+	log "github.com/vrianta/gulog"
 )
 
 type (

@@ -7,7 +7,7 @@ import (
 
 	_ "embed"
 
-	"github.com/vrianta/agai/v1/log"
+	log "github.com/vrianta/gulog"
 )
 
 var agai_version string = "v0.2.7"

@@ -15,15 +15,15 @@ import (
 	"text/template"
 
 	"github.com/vrianta/agai/v1/config"
-	"github.com/vrianta/agai/v1/log"
+	log "github.com/vrianta/gulog"
 )
 
 func create_controller() {
 
 	if len(f.controller_names_to_create) > 0 {
-		log.Write("---------------------------------\n")
-		log.Write("Creating Controllers:\n")
-		log.Write("---------------------------------\n")
+		log.WriteLog("---------------------------------\n")
+		log.WriteLog("Creating Controllers:\n")
+		log.WriteLog("---------------------------------\n")
 	} else {
 		return
 	}
@@ -100,7 +100,7 @@ func create_controller() {
 		log.Warn("There are no option to update the routes automatically - please make sure you update the routes in routes.go file int the root directory")
 	}
 
-	log.Write("---------------------------------")
+	log.WriteLog("---------------------------------")
 }
 
 /*
@@ -113,9 +113,9 @@ func create_view() {
 		return
 	}
 
-	log.Write("---------------------------------")
-	log.Write("Creating Views: ")
-	log.Write("---------------------------------")
+	log.WriteLog("---------------------------------")
+	log.WriteLog("Creating Views: ")
+	log.WriteLog("---------------------------------")
 
 	for _, view_name := range f.view_names_to_create {
 		// Normalize view name and allow nested paths like "admin/dashboard"
@@ -180,7 +180,7 @@ func create_view() {
 
 		log.Info("✅ View '%s' created at %s", view_name, viewFile)
 	}
-	log.Write("---------------------------------")
+	log.WriteLog("---------------------------------")
 }
 
 /*
@@ -192,9 +192,9 @@ func create_view() {
 func create_theme() {
 
 	if len(f.view_names_to_create) > 0 {
-		log.Write("---------------------------------")
-		log.Write("Creating Views: ")
-		log.Write("---------------------------------")
+		log.WriteLog("---------------------------------")
+		log.WriteLog("Creating Views: ")
+		log.WriteLog("---------------------------------")
 
 	} else {
 		return
@@ -253,16 +253,16 @@ func create_theme() {
 
 		log.Info("✅ View '%s' created at %s", view_name, viewFile)
 	}
-	log.Write("---------------------------------")
+	log.WriteLog("---------------------------------")
 }
 
 // Creating template Model
 func create_models() {
 
 	if len(f.model_names_to_create) > 0 {
-		log.Write("---------------------------------")
-		log.Write("Creating Models: ")
-		log.Write("---------------------------------")
+		log.WriteLog("---------------------------------")
+		log.WriteLog("Creating Models: ")
+		log.WriteLog("---------------------------------")
 	} else {
 		return
 	}
@@ -322,7 +322,7 @@ func create_models() {
 		log.Info("✅ Model '%s' created at: %s", model_name, model_output_path)
 	}
 
-	log.Write("---------------------------------")
+	log.WriteLog("---------------------------------")
 
 }
 
@@ -335,8 +335,8 @@ Then eavluate the model in the file and craete component according to that
 func create_components() {
 
 	if len(f.component_names_to_create) > 0 {
-		log.Write("Creating Components: ")
-		log.Write("---------------------------------")
+		log.WriteLog("Creating Components: ")
+		log.WriteLog("---------------------------------")
 	} else {
 		return
 	}
@@ -424,7 +424,7 @@ func create_components() {
 		log.Info("✅ Component '%s' created at %s", componentName, componentFile)
 	}
 
-	log.Write("---------------------------------")
+	log.WriteLog("---------------------------------")
 
 }
 

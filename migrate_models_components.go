@@ -1,6 +1,6 @@
 package main
 
-import "github.com/vrianta/agai/v1/log"
+import log "github.com/vrianta/gulog"
 
 func migrate_model_and_component() {
 	if f.migrate_model {

@@ -2,7 +2,7 @@ package agai
 
 import (
 	"github.com/vrianta/agai/v1/internal/session"
-	"github.com/vrianta/agai/v1/log"
+	log "github.com/vrianta/gulog"
 )
 
 /*

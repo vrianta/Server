@@ -5,8 +5,8 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/vrianta/agai/v1/log"
 	"github.com/vrianta/agai/v1/utils"
+	log "github.com/vrianta/gulog"
 )
 
 var phpBlockPattern = regexp.MustCompile(`<\?php([\s\S]*?)\?>`)

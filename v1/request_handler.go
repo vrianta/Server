@@ -7,7 +7,7 @@ import (
 
 	"github.com/vrianta/agai/v1/config"
 	"github.com/vrianta/agai/v1/internal/template"
-	"github.com/vrianta/agai/v1/log"
+	log "github.com/vrianta/gulog"
 )
 
 // Handler processes incoming HTTP requests and manages user sessions.
