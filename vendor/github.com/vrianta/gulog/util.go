@@ -27,7 +27,7 @@ func init() {
 	go startLogging()
 }
 
-func startLogging() error {
+func startLogging() {
 	Info("gulog: Service has been started, make. \nIf you are using os.exit() or any unprecidented exit in the system please use gulog.Wait() in the main end")
 	waitG.Done()
 	for {
@@ -52,7 +52,7 @@ func startLogging() error {
 				}
 				if c.File != "" {
 					if err := os.WriteFile(c.File, []byte(data), fs.ModePerm); err != nil {
-						return fmt.Errorf("Failed to save the log in %s \nreason: %s", c.File, err.Error())
+						fmt.Errorf("Failed to save the log in %s \nreason: %s", c.File, err.Error())
 					}
 				}
 			}
@@ -63,7 +63,7 @@ func startLogging() error {
 			}
 			if c.File != "" {
 				if err := os.WriteFile(c.File, []byte(msg.data), fs.ModePerm); err != nil {
-					return fmt.Errorf("Failed to save the log in %s \nreason: %s", c.File, err.Error())
+					fmt.Errorf("Failed to save the log in %s \nreason: %s", c.File, err.Error())
 				}
 			}
 		}

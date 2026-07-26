@@ -1,6 +1,6 @@
-github.com/vrianta/gonfig v0.0.0-20260703215428-3204eb22ab74 h1:DuOd0h4gAlsExWg6F1dwUseP1x1TZTnR5ML/+Gg7zwM=
-github.com/vrianta/gonfig v0.0.0-20260703215428-3204eb22ab74/go.mod h1:WSltFTrctfaTAPBj/nJt9EFcwS83eS2w1SVrefHyE60=
+github.com/vrianta/gonfig v1.0.1 h1:6Lcg7JatXyoqZFd0mE9fGpuENoseLuqTL7zBjRnobho=
+github.com/vrianta/gonfig v1.0.1/go.mod h1:WSltFTrctfaTAPBj/nJt9EFcwS83eS2w1SVrefHyE60=
 github.com/vrianta/gulog v1.0.1 h1:59JIwV397orHfsP+/FIQTtJZW7EyHlpMEpkufWzO1pI=
 github.com/vrianta/gulog v1.0.1/go.mod h1:4P9KGMqZI9K38BkwEpQtgRlQJhmdhuOyv3rZH5nmK1s=
-golang.org/x/crypto v0.40.0 h1:r4x+VvoG5Fm+eJcxMaY8CQM7Lb0l1lsmjGBQ6s8BfKM=
-golang.org/x/crypto v0.40.0/go.mod h1:Qr1vMER5WyS2dfPHAlsOj01wgLbsyWtFn/aY+5+ZdxY=
+golang.org/x/crypto v0.54.0 h1:YLIA59K4fiNzHzjnZt2tUJQjQtUWfWbeHBqKtk3eScw=
+golang.org/x/crypto v0.54.0/go.mod h1:KWL8ny2AZdGR2cWmzeHrp2azQPGogOv+HeQaVEXC2dk=
