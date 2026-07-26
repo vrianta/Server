@@ -384,15 +384,20 @@ var runBName string = filepath.Base(currentDir) + "run_" + "a7Kp9LmX2QzN8rTf"
  */
 func runAppCmd() *exec.Cmd {
 	buildAgai() // building the application to run
-	r := exec.Command(runBName, "-ss")
+	r := exec.Command(filepath.Join(currentDir, output_app_name), "-ss")
 
 	return r
 }
 
 // Clean the build bindary
 func buildAgai() {
-	if err := exec.Command("go", "build", ".", "-o", runBName).Run(); err != nil {
+	pr := exec.Command("go", "build", "-o", output_app_name, ".")
+	if err := pr.Start(); err != nil {
 		panic("Failed to  Build app " + err.Error())
+	}
+
+	if err := pr.Wait(); err != nil {
+		panic(err.Error())
 	}
 }
 
