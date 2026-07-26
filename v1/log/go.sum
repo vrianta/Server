@@ -1,0 +1,8 @@
+github.com/vrianta/agai v0.2.7 h1:n2lCTI/hZ5PD+naH8P7nUWYRXhC8GzUcYjn0KwHTirY=
+github.com/vrianta/agai v0.2.7/go.mod h1:SjdyHrxP7H6eLmwzUWYHHcpDfr/BpJkU8qrbp+9duEA=
+github.com/vrianta/golang/gonfig v0.0.0-20260619120959-e779ffa8d4e8 h1:6Qs6QEGgtYfOqx1dRH2yvA2qOWrZbA4sXId84GrycwE=
+github.com/vrianta/golang/gonfig v0.0.0-20260619120959-e779ffa8d4e8/go.mod h1:qLPNzfRij+GfQFg5l+nVEbc+Rbg+yxwXK9XPhOLRwpQ=
+github.com/vrianta/gonfig v0.0.0-20260703215428-3204eb22ab74 h1:DuOd0h4gAlsExWg6F1dwUseP1x1TZTnR5ML/+Gg7zwM=
+github.com/vrianta/gonfig v0.0.0-20260703215428-3204eb22ab74/go.mod h1:WSltFTrctfaTAPBj/nJt9EFcwS83eS2w1SVrefHyE60=
+golang.org/x/crypto v0.40.0 h1:r4x+VvoG5Fm+eJcxMaY8CQM7Lb0l1lsmjGBQ6s8BfKM=
+golang.org/x/crypto v0.40.0/go.mod h1:Qr1vMER5WyS2dfPHAlsOj01wgLbsyWtFn/aY+5+ZdxY=

@@ -1,162 +1,48 @@
-package log
+package gulog
 
+// this is global log writing
 import (
-	"encoding/json"
-	"fmt"
-	"os"
-	"strings"
-	"time"
-
-	Config "github.com/vrianta/agai/v1/config"
+	gonfig "github.com/vrianta/gonfig/v1"
 )
 
-// LogLevel enum
-type LogLevel int
+type writer struct {
+	conf Config
+}
+type Config struct {
+	// Stop the Log Printing in the console useful for production environment
+	NoLog bool `env:"NO_GULOG" arg:"no-gulog" default:"false"`
+	// it let the user decide how he want to see the log supported formats are only json and plain texts now
+	Format string `env:"GULOG_FORMAT" arg:"gulog-format" default:"text"`
+	// a file name where user want to store the log, by default it is empty meens user do not want to create logs
+	File string `env:"GULOG_LOGFIE" arg:"gulog-logfile" default:""`
+}
 
-const (
-	DEBUG LogLevel = iota
-	INFO
-	WARN
-	ERROR
-)
+func New(_conf *Config) writer {
+	if _conf == nil {
+		return writer{
+			conf: gonfig.New[Config](false),
+		}
+	}
 
-var currentLevel = DEBUG
-var useJSON = false
-
-func SetLogLevel(level string) {
-	switch strings.ToUpper(level) {
-	case "DEBUG":
-		currentLevel = DEBUG
-	case "INFO":
-		currentLevel = INFO
-	case "WARN":
-		currentLevel = WARN
-	case "ERROR":
-		currentLevel = ERROR
+	return writer{
+		conf: *_conf,
 	}
 }
 
-func EnableJSONOutput(enable bool) {
-	useJSON = enable
-}
-
-func log(level LogLevel, label string, color string, msg string, args ...any) {
-	if Config.GetBuild() {
-		return
-	}
-	if level < currentLevel {
-		return
-	}
-
-	timestamp := time.Now().Format("2006-01-02 15:04:05")
-	formatted := fmt.Sprintf(msg, args...)
-
-	if useJSON {
-		logEntry := map[string]any{
-			"timestamp": timestamp,
-			"level":     label,
-			"message":   formatted,
-		}
-		if data, err := json.Marshal(logEntry); err == nil {
-			fmt.Println(string(data))
-		}
-	} else {
-		fmt.Printf("%s[%s] %s: %s\033[0m\n", color, timestamp, label, formatted)
-	}
-}
-
-func erorlog(level LogLevel, label string, color string, msg string, args ...any) {
-	if Config.GetBuild() {
-		return
-	}
-	if level < currentLevel {
-		return
-	}
-
-	timestamp := time.Now().Format("2006-01-02 15:04:05")
-	formatted := fmt.Sprintf(msg, args...)
-
-	if useJSON {
-		logEntry := map[string]any{
-			"timestamp": timestamp,
-			"level":     label,
-			"message":   formatted,
-		}
-		if data, err := json.Marshal(logEntry); err == nil {
-			fmt.Fprintln(os.Stderr, "Error:", string(data))
-		}
-	} else {
-		fmt.Fprintln(os.Stderr, "Error:", fmt.Sprintf("%s[%s] %s: %s\033[0m\n", color, timestamp, label, formatted))
-	}
-}
-
-func Success(msg string, args ...any) {
-	if Config.GetBuild() {
-		return
-	}
-	log(INFO, "[SUCCESS]", "\033[32m", msg, args...)
+func (w *writer) Success(msg string, args ...any) {
+	log(INFO, &w.conf, msg, args...)
 }
 
 // Colored log wrappers
-func Debug(msg string, args ...any) {
-	if Config.GetBuild() {
-		return
-	}
-	log(DEBUG, "[DEBUG]", "\033[36m", msg, args...)
+func (w *writer) Debug(msg string, args ...any) {
+	log(DEBUG, &w.conf, msg, args...)
 }
-func Info(msg string, args ...any) {
-	if Config.GetBuild() {
-		return
-	}
-	log(INFO, "[INFO]", "\033[32m", msg, args...)
+func (w *writer) Info(msg string, args ...any) {
+	log(INFO, &w.conf, msg, args...)
 }
-func Warn(msg string, args ...any) {
-	if Config.GetBuild() {
-		return
-	}
-	log(WARN, "[WARN]", "\033[33m", msg, args...)
+func (w *writer) Warn(msg string, args ...any) {
+	log(WARN, &w.conf, msg, args...)
 }
-func Error(msg string, args ...any) {
-	if Config.GetBuild() {
-		return
-	}
-	erorlog(ERROR, "[ERROR]", "\033[31m", msg, args...)
-}
-func Write(msg string, args ...any) {
-	if Config.GetBuild() {
-		return
-	}
-	green := "\033[32m"
-	reset := "\033[0m"
-	formatted := fmt.Sprintf(msg, args...)
-	fmt.Printf("%s%s%s", green, formatted, reset)
-}
-
-// Legacy support
-func WriteLog(messages ...any) {
-	if Config.GetBuild() {
-		return
-	}
-	fmt.Println(messages...)
-}
-
-func WriteLogf(msg string, args ...any) {
-	if Config.GetBuild() {
-		return
-	}
-	fmt.Printf(msg, args...)
-}
-
-// Standard response wrapper
-func GetResponse(code string, message string, success bool) string {
-	result, _ := json.Marshal(struct {
-		Code    string `json:"CODE"`
-		Message string `json:"MESSAGE"`
-		Success bool   `json:"SUCCESS"`
-	}{
-		Code:    code,
-		Message: message,
-		Success: success,
-	})
-	return string(result)
+func (w *writer) Error(msg string, args ...any) {
+	log(ERROR, &w.conf, msg, args...)
 }
