@@ -166,7 +166,7 @@ func (_c *Controller) parseRequest() {
 		}
 	}
 
-	contentType := strings.Split(_c.R.Header.Get("Content-Type"), ";")[0]
+	contentType, _, _ := strings.Cut(_c.R.Header.Get("Content-Type"), ";")
 	switch contentType {
 	case "application/json":
 		if p, err := io.ReadAll(_c.R.Body); err != nil {
@@ -185,7 +185,6 @@ func (_c *Controller) parseRequest() {
 				_c.processPostParams(key, values)
 			}
 		}
-
 	case "multipart/form-data":
 		// Handle multipart form data (file upload)
 		// Note: This case is handled separately below
@@ -207,7 +206,6 @@ func (_c *Controller) parseRequest() {
 		for key, values := range _c.R.PostForm {
 			_c.processPostParams(key, values)
 		}
-
 	default:
 		log.Error("Content-Type %s not supported yet raise a issue in github to get it implimented", contentType)
 	}

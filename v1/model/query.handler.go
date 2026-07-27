@@ -356,6 +356,7 @@ func (q *queryBuilder) Fetch() (Results, error) {
 
 	where := q.buildWhere()
 	limit := q.buildLimit()
+	offset := q.buildOffset()
 
 	order := ""
 	if q.orderBy != "" {
@@ -365,9 +366,29 @@ func (q *queryBuilder) Fetch() (Results, error) {
 	if q.groupBy != "" {
 		group = "GROUP BY " + q.groupBy
 	}
-	queryBuilder := fmt.Sprintf("SELECT * FROM %s %s %s %s %s", q.model.TableName, where, group, order, limit)
 
-	// queryBuilder := fmt.Sprintf("SELECT * FROM %s %s %s", q.model.TableName, where, limit)
+	clauses := []string{}
+	if where != "" {
+		clauses = append(clauses, where)
+	}
+	if group != "" {
+		clauses = append(clauses, group)
+	}
+	if order != "" {
+		clauses = append(clauses, order)
+	}
+	if limit != "" {
+		clauses = append(clauses, limit)
+	}
+	if offset != "" {
+		clauses = append(clauses, offset)
+	}
+
+	queryBuilder := fmt.Sprintf("SELECT * FROM `%s` %s", q.model.TableName, strings.TrimSpace(strings.Join(clauses, " ")))
+	if strings.TrimSpace(strings.Join(clauses, " ")) == "" {
+		queryBuilder = fmt.Sprintf("SELECT * FROM `%s`", q.model.TableName)
+	}
+
 	rows, err := db.Query(queryBuilder, q.whereArgs...)
 	if err != nil {
 		return nil, err
@@ -438,6 +459,42 @@ func (q *queryBuilder) First() (Result, error) {
 		return row, nil // Return first row encountered
 	}
 	return nil, nil
+}
+
+// Count executes the built count query and returns the number of matching rows.
+// Usage: UserModel.Get().Where(...).Is(...).Count()
+func (q *queryBuilder) Count() (int64, error) {
+	db, err := DatabaseHandler.GetDatabase()
+	if err != nil {
+		return 0, err
+	}
+
+	where := q.buildWhere()
+	group := ""
+	if q.groupBy != "" {
+		group = "GROUP BY " + q.groupBy
+	}
+
+	clauses := []string{}
+	if where != "" {
+		clauses = append(clauses, where)
+	}
+	if group != "" {
+		clauses = append(clauses, group)
+	}
+
+	query := fmt.Sprintf("SELECT COUNT(*) FROM `%s` %s", q.model.TableName, strings.TrimSpace(strings.Join(clauses, " ")))
+	if strings.TrimSpace(strings.Join(clauses, " ")) == "" {
+		query = fmt.Sprintf("SELECT COUNT(*) FROM `%s`", q.model.TableName)
+	}
+
+	row := db.QueryRow(query, q.whereArgs...)
+	var count int64
+	if err := row.Scan(&count); err != nil {
+		return 0, err
+	}
+
+	return count, nil
 }
 
 // =======================
@@ -658,6 +715,13 @@ func (q *queryBuilder) buildWhere() string {
 func (q *queryBuilder) buildLimit() string {
 	if q.limit > 0 {
 		return fmt.Sprintf("LIMIT %d", q.limit)
+	}
+	return ""
+}
+
+func (q *queryBuilder) buildOffset() string {
+	if q.offset > 0 {
+		return fmt.Sprintf("OFFSET %d", q.offset)
 	}
 	return ""
 }
